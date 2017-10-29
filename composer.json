@@ -1,0 +1,22 @@
+{
+  "name": "wumvi/yandex-disk-api",
+  "description": "Yandex Disk Api",
+  "library": "library",
+  "autoload": {
+    "psr-4": {
+      "YandexDiskApi\\": "src"
+    }
+  },
+  "require": {
+    "wumvi/lightweight-curl": "^1.0.4"
+  },
+  "require-dev": {
+  },
+  "version": "1.0.4",
+  "authors": [
+    {
+      "name": "Kozlenko Vitaliy",
+      "role": "Developer"
+    }
+  ]
+}
