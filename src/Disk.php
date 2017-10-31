@@ -34,14 +34,14 @@ class Disk
     }
 
     /**
-     * @param string $srcFile
-     * @param string $distFile
+     * @param string $serverFile
+     * @param string $yandexFile
      *
      * @throws \Exception
      */
-    public function upload(string $srcFile, string $distFile): void
+    public function upload(string $serverFile, string $yandexFile): void
     {
-        if (!is_readable($srcFile)) {
+        if (!is_readable($serverFile)) {
             throw new DiskException('Upload file not found');
         }
 
@@ -50,7 +50,7 @@ class Disk
             'Authorization' => 'OAuth ' . $this->token,
         ]);
 
-        $url = self::URL . 'upload?path=' . urlencode($distFile) . '&overwrite=true';
+        $url = self::URL . 'upload?path=' . urlencode($yandexFile) . '&overwrite=true';
         $request->setUrl($url);
         $response = $this->curl->call($request);
         $data = json_decode($response->getData());
@@ -62,15 +62,47 @@ class Disk
         $request->setUrl($data->href);
         $request->setMethod(Request::METHOD_PUT);
 
-        $request->setFileForPutRequest($srcFile);
+        $request->setFileForPutRequest($serverFile);
         $request->setHeaders([
-            'Etag' => md5_file($srcFile),
-            'Sha256' => hash_file('sha256', $srcFile),
+            'Etag' => md5_file($serverFile),
+            'Sha256' => hash_file('sha256', $serverFile),
         ]);
 
         $response = $this->curl->call($request);
         if ($response->getHttpCode() !== 201) {
             throw new DiskException('ErrorToUpload');
+        }
+    }
+
+    /**
+     * @param string $yandexFile File on Yandex
+     * @param string $serverFile Dist file on own server
+     *
+     * @throws DiskException
+     */
+    public function download(string $yandexFile, string $serverFile): void
+    {
+        $request = new Request();
+        $request->setHeaders([
+            'Authorization' => 'OAuth ' . $this->token,
+        ]);
+
+        $request->setUrl(self::URL . 'download?path=' . urlencode($yandexFile));
+        $response = $this->curl->call($request);
+
+        $data = json_decode($response->getData());
+        if ($response->getHttpCode() < 200 || 300 <= $response->getHttpCode()) {
+            throw new DiskException($data->error);
+        }
+
+        $request = new Request();
+        $request->setUrl($data->href);
+        $request->setOutFilename($serverFile);
+
+        $response = $this->curl->call($request);
+
+        if ($response->getHttpCode() !== 200) {
+            throw new DiskException('ErrorToDownload');
         }
     }
 }
