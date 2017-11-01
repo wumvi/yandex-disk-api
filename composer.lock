@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fbc31ca6a8f16de7b46a694841f2ed7f",
+    "content-hash": "a5f3cee44e581715f049121daea75c89",
     "packages": [
         {
             "name": "wumvi/lightweight-curl",
-            "version": "1.0.4",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wumvi/lightweight-curl.git",
-                "reference": "4c5f197cb69467e4697ef4a0f3e8a9e802796c98"
+                "reference": "0b0ecdacaa3b7806ae3e4cf0ead549e96c6a8e1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wumvi/lightweight-curl/zipball/4c5f197cb69467e4697ef4a0f3e8a9e802796c98",
-                "reference": "4c5f197cb69467e4697ef4a0f3e8a9e802796c98",
+                "url": "https://api.github.com/repos/wumvi/lightweight-curl/zipball/0b0ecdacaa3b7806ae3e4cf0ead549e96c6a8e1f",
+                "reference": "0b0ecdacaa3b7806ae3e4cf0ead549e96c6a8e1f",
                 "shasum": ""
             },
             "type": "library",
@@ -34,7 +34,7 @@
                 }
             ],
             "description": "LightweightCurl Curl library",
-            "time": "2017-10-29T22:36:06+00:00"
+            "time": "2017-10-31T22:14:03+00:00"
         }
     ],
     "packages-dev": [
