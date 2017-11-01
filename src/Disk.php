@@ -34,6 +34,14 @@ class Disk
     }
 
     /**
+     * @return string
+     */
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    /**
      * @param string $srcFile
      * @param string $distFile
      *
