@@ -5,57 +5,32 @@ namespace YandexDiskApi;
 
 use LightweightCurl\Curl;
 use LightweightCurl\Request;
-use YandexDiskApi\Exception\DiskException;
+use YandexDiskApi\Arguments\Disk\GetInfo as GetInfoArguments;
+use YandexDiskApi\Exception\Upload as UploadException;
+use YandexDiskApi\Exception\Download as DownloadException;
+use YandexDiskApi\Exception\GetInfo as GetInfoException;
 
-class Disk
+use YandexDiskApi\Response\Disk\GetInfo as GetInfoResponse;
+
+class Disk extends Common
 {
-    /**  */
-    private const URL = 'https://cloud-api.yandex.net/v1/disk/resources/';
-
-    /**
-     * @var string
-     */
-    private $token;
-
-    /**
-     * @var Curl
-     */
-    private $curl;
-
-    /**
-     * Disk constructor.
-     *
-     * @param string $token
-     */
-    public function __construct(string $token)
-    {
-        $this->token = $token;
-        $this->curl = new Curl();
-    }
-
     /**
      * @param string $serverFile
      * @param string $yandexFile
      *
-     * @throws \Exception
+     * @throws UploadException
      */
     public function upload(string $serverFile, string $yandexFile): void
     {
         if (!is_readable($serverFile)) {
-            throw new DiskException('Upload file not found');
+            throw new UploadException('Upload file not found');
         }
 
-        $request = new Request();
-        $request->setHeaders([
-            'Authorization' => 'OAuth ' . $this->token,
-        ]);
-
-        $url = self::URL . 'upload?path=' . urlencode($yandexFile) . '&overwrite=true';
-        $request->setUrl($url);
+        $request = $this->makeRequest('upload?path=' . urlencode($yandexFile) . '&overwrite=true');
         $response = $this->curl->call($request);
         $data = json_decode($response->getData());
         if ($response->getHttpCode() < 200 || 300 <= $response->getHttpCode()) {
-            throw new DiskException($data->error);
+            throw new UploadException($data->error);
         }
 
         $request = new Request();
@@ -70,7 +45,7 @@ class Disk
 
         $response = $this->curl->call($request);
         if ($response->getHttpCode() !== 201) {
-            throw new DiskException('ErrorToUpload');
+            throw new UploadException('ErrorToUpload');
         }
     }
 
@@ -78,21 +53,16 @@ class Disk
      * @param string $yandexFile File on Yandex
      * @param string $serverFile Dist file on own server
      *
-     * @throws DiskException
+     * @throws DownloadException
      */
     public function download(string $yandexFile, string $serverFile): void
     {
-        $request = new Request();
-        $request->setHeaders([
-            'Authorization' => 'OAuth ' . $this->token,
-        ]);
-
-        $request->setUrl(self::URL . 'download?path=' . urlencode($yandexFile));
+        $request = $this->makeRequest('download?path=' . urlencode($yandexFile));
         $response = $this->curl->call($request);
 
         $data = json_decode($response->getData());
         if ($response->getHttpCode() < 200 || 300 <= $response->getHttpCode()) {
-            throw new DiskException($data->error);
+            throw new DownloadException($data->error);
         }
 
         $request = new Request();
@@ -102,7 +72,36 @@ class Disk
         $response = $this->curl->call($request);
 
         if ($response->getHttpCode() !== 200) {
-            throw new DiskException('ErrorToDownload');
+            throw new DownloadException('ErrorToDownload');
         }
+    }
+
+    public function getInfo(GetInfoArguments $info): GetInfoResponse
+    {
+
+        $query = [
+            'path' => $info->getPath(),
+        ];
+
+        if ($info->getLimit()) {
+            $query['limit'] = $info->getLimit();
+        }
+
+        if ($info->getOffset()) {
+            $query['offset'] = $info->getOffset();
+        }
+
+        if ($info->getSort()) {
+            $query['sort'] = $info->getSort();
+        }
+
+        $request = $this->makeRequest('?' . http_build_query($query));
+        $response = $this->curl->call($request);
+
+        if ($response->getHttpCode() !== 200) {
+            throw new GetInfoException($request->getData());
+        }
+
+        return new GetInfoResponse($response->getData());
     }
 }

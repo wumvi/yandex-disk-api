@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace YandexDiskApi\Exception;
 
-class DiskException extends \Exception
+class Disk extends \Exception
 {
 
 }

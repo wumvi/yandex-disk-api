@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use YandexDiskApi\Disk;
-use YandexDiskApi\Exception\DiskException;
+use YandexDiskApi\Exception\Disk;
 
 /**
  * @covers Disk
@@ -28,7 +28,7 @@ final class DiskTest extends TestCase
 
     public function testWrongToken(): void
     {
-        $this->expectException(DiskException::class);
+        $this->expectException(Disk::class);
 
         $disk = new Disk('wrong-token');
         $disk->upload('./assets/lola-edu.png', self::TARGET_PATH_1);
@@ -36,7 +36,7 @@ final class DiskTest extends TestCase
 
     public function testFileNotFound(): void
     {
-        $this->expectException(DiskException::class);
+        $this->expectException(Disk::class);
 
         $disk = new Disk($this->token);
         $disk->upload('blabla', self::TARGET_PATH_1);
