@@ -68,6 +68,7 @@ class Disk extends Common
         $request = new Request();
         $request->setUrl($data->href);
         $request->setOutFilename($serverFile);
+        $request->setFollowLocation(true);
 
         $response = $this->curl->call($request);
 
