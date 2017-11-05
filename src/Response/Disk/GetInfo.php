@@ -34,8 +34,8 @@ class GetInfo
     {
         $data = json_decode($raw);
 
-        $this->sha256 = $data->sha256;
-        $this->md5 = $data->md5;
+        $this->sha256 = $data->sha256 ?? '';
+        $this->md5 = $data->md5 ?? '';
         $this->type = $data->type;
         $this->size = $data->size;
         $this->name = $data->name;

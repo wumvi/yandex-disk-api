@@ -99,7 +99,7 @@ class Disk extends Common
         $response = $this->curl->call($request);
 
         if ($response->getHttpCode() !== 200) {
-            throw new GetInfoException($request->getData());
+            throw new GetInfoException($response->getData());
         }
 
         return new GetInfoResponse($response->getData());
